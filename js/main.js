@@ -146,10 +146,12 @@ window.onload = function() {
     	    enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     	    spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     	    
+    	    //starting splash screen
     	    startScreen = game.add.sprite(0, 0, 'back');
     	    startText = game.add.text(60, 55, 'Player 1\nMove: A, D, W\nShoot: Spacebar\nFire: M', startTextStyle);
     	    startText2 = game.add.text(650, 55, 'Player 2\nMove: Arrows\nShoot: Enter\nFire: Num +', startTextStyle);
     	    
+    	    //audio
     	    music = game.add.audio('music');
     	    shoot = game.add.audio('shoot');
     	    shoot.allowMultiple = true;
@@ -171,7 +173,7 @@ window.onload = function() {
     	    }
     	    else
     	    {
-    	    	    if (!gameRunning)
+    	    	    if (!gameRunning) //first run check
     	    	    {
     	    	    	    startScreen.destroy();
     	    	    	    startText.destroy();
@@ -186,7 +188,7 @@ window.onload = function() {
     
     function update() //run game logic
     {
-    	    if ((avatarLife < 1) && (gameEnd === false))
+    	    if ((avatarLife < 1) && (gameEnd === false)) //endgame check
     	    {
     	    	    gameEnd = true;
     	    	    gameRunning = false;
@@ -205,7 +207,7 @@ window.onload = function() {
     	    	    game.add.text(310, 150, 'Player 1 Wins!\n\nHumanity Weeps...', startTextStyle);
     	    }
     	       	    
-    	    if (gameRunning)
+    	    if (gameRunning) //game actually running
     	    {
     	    	    avatarText.setText('Player 1: ' + avatarLife);
     	    	    enemyText.setText('Player 2: ' + enemyLife);
@@ -232,7 +234,8 @@ window.onload = function() {
     	    	    game.physics.arcade.collide(enemyFireShotGroup, floor, null, killEnemyFireShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, ceiling, null, killEnemyFireShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, platform, null, killEnemyFireShot, this);
-    	        	    
+    	    	    
+    	    	    //player 1 movement and attack
     	    	    avatar.body.velocity.x = 0;
     	    	    if (aKey.isDown && avatar.body.touching.down)
     	    	    {
@@ -353,7 +356,8 @@ window.onload = function() {
     	    	    	    	    }
     	    	    	    }
     	    	    }
-    	    
+    	    	    
+    	    	    //player 2 movement and attack
     	    	    enemy.body.velocity.x = 0;
     	    	    if (cursors.left.isDown && enemy.body.touching.down)
     	    	    {
@@ -477,6 +481,7 @@ window.onload = function() {
     	    }
     }
     
+    //remove errant attacks
     function killShot(wall, shot)
     {
     	    shot.destroy();
@@ -501,6 +506,7 @@ window.onload = function() {
     	    fireEnemyShotCount = fireEnemyShotCount - 1;
     }
     
+    //damage players from successful attacks
     function damageAvatar(avatar, shot)
     {
     	    if (avatarLife > 5)
