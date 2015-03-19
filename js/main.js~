@@ -1,7 +1,7 @@
 window.onload = function() {
     // William Aulson
     // CS 325 Digital Assignment #6
-    // Inferior Megaman Knock Off
+    // The Price of Freedom
     
     "use strict";
     
