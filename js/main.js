@@ -26,11 +26,11 @@ window.onload = function() {
     // variables
     var avatar;
     var enemy;
-    var cursors;
+    //var cursors;
     var aKey;
     var dKey;
     var wKey;
-    var enterKey;
+    //var enterKey;
     var spaceKey;
     var floor;
     var ceiling;
@@ -52,12 +52,12 @@ window.onload = function() {
     var avatarShot;
     var enemyShot;
     var mKey;
-    var plusKey;
+    //var plusKey;
     var avatarFireShot;
     var avatarFireShotGroup;
     var enemyFireShot;
     var enemyFireShotGroup;
-    var platform;
+    //var platform;
     var avatarLife = 100;
     var enemyLife = 100;
     var textStyle = { font: "20px Arial", fill: "#000000", align: "center" };
@@ -73,7 +73,14 @@ window.onload = function() {
     var damage;
     var death;
     var gameEnd = false;
-    
+    var notInScript = 0;
+    var regularShoot = 0;
+    var regularShootTime = 0;
+    var regularShootSpeed = 0;
+    var regularShootSpeedX = 0;
+    var regularShootCount = 0;
+    var aimValue = 0;
+       
     function create() //create assets
     {
     	    game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -91,11 +98,11 @@ window.onload = function() {
     	    enemyFireShotGroup = game.add.group();
     	    game.physics.arcade.enable(enemyFireShotGroup);
     	    
-    	    platform = game.add.sprite(262, 375, 'platform');
+    	    /*platform = game.add.sprite(262, 375, 'platform');
     	    game.physics.arcade.enable(platform);
     	    platform.body.allowGravity = false;
     	    platform.body.immovable = true;
-    	    boundGroup.add(platform);
+    	    boundGroup.add(platform);*/
     	    
     	    leftWall = game.add.sprite(0, 0, 'wall');
     	    game.physics.arcade.enable(leftWall);
@@ -131,19 +138,20 @@ window.onload = function() {
     	    enemy = game.add.sprite(892, 150, 'dude2');
     	    game.physics.arcade.enable(enemy);
     	    enemy.body.gravity.y = 1000;
+    	    //enemy.body.immovable = true;
     	    enemy.animations.add('left', [0, 1, 2, 3], 10, true);
     	    enemy.animations.add('right', [5, 6, 7, 8], 10, true);
     	    
     	    avatarText = game.add.text(60, 55, 'Player 1: ' + avatarLife, textStyle);
     	    enemyText = game.add.text(847, 55, 'Player 2: ' + avatarLife, textStyle);
     	    
-    	    cursors = game.input.keyboard.createCursorKeys();
+    	    //cursors = game.input.keyboard.createCursorKeys();
     	    aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
     	    dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     	    wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
     	    mKey = game.input.keyboard.addKey(Phaser.Keyboard.M);
-    	    plusKey = game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
-    	    enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    	    //plusKey = game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
+    	    //enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     	    spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     	    
     	    //starting splash screen
@@ -212,6 +220,8 @@ window.onload = function() {
     	    	    avatarText.setText('Player 1: ' + avatarLife);
     	    	    enemyText.setText('Player 2: ' + enemyLife);
     	    
+    	    	    game.physics.arcade.collide(enemy, floor, null, airEnd, this);
+    	    	    game.physics.arcade.overlap(avatar, enemy, null, null, this);
     	    	    game.physics.arcade.collide(avatar, boundGroup, null, null, this);
     	    	    game.physics.arcade.collide(enemy, boundGroup, null, null, this);
     	    	    game.physics.arcade.collide(avatar, enemyShotGroup, null, damageAvatar, this);
@@ -220,20 +230,20 @@ window.onload = function() {
     	    	    game.physics.arcade.collide(enemy, avatarFireShotGroup, null, fireDamageEnemy, this);
     	    	    game.physics.arcade.collide(avatarShotGroup, rightWall, null, killShot, this);
     	    	    game.physics.arcade.collide(avatarShotGroup, leftWall, null, killShot, this);
-    	    	    game.physics.arcade.collide(avatarShotGroup, platform, null, killShot, this);
+    	    	    //game.physics.arcade.collide(avatarShotGroup, platform, null, killShot, this);
     	    	    game.physics.arcade.collide(avatarFireShotGroup, rightWall, null, killFireShot, this);
     	    	    game.physics.arcade.collide(avatarFireShotGroup, leftWall, null, killFireShot, this);
     	    	    game.physics.arcade.collide(avatarFireShotGroup, floor, null, killFireShot, this);
     	    	    game.physics.arcade.collide(avatarFireShotGroup, ceiling, null, killFireShot, this);
-    	    	    game.physics.arcade.collide(avatarFireShotGroup, platform, null, killFireShot, this);
+    	    	    //game.physics.arcade.collide(avatarFireShotGroup, platform, null, killFireShot, this);
     	    	    game.physics.arcade.collide(enemyShotGroup, rightWall, null, killEnemyShot, this);
     	    	    game.physics.arcade.collide(enemyShotGroup, leftWall, null, killEnemyShot, this);
-    	    	    game.physics.arcade.collide(enemyShotGroup, platform, null, killEnemyShot, this);
+    	    	    //game.physics.arcade.collide(enemyShotGroup, platform, null, killEnemyShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, rightWall, null, killEnemyFireShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, leftWall, null, killEnemyFireShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, floor, null, killEnemyFireShot, this);
     	    	    game.physics.arcade.collide(enemyFireShotGroup, ceiling, null, killEnemyFireShot, this);
-    	    	    game.physics.arcade.collide(enemyFireShotGroup, platform, null, killEnemyFireShot, this);
+    	    	    //game.physics.arcade.collide(enemyFireShotGroup, platform, null, killEnemyFireShot, this);
     	    	    
     	    	    //player 1 movement and attack
     	    	    avatar.body.velocity.x = 0;
@@ -356,7 +366,101 @@ window.onload = function() {
     	    	    	    	    }
     	    	    	    }
     	    	    }
+    	    	    if (regularShoot)
+    	    	    {
+    	    	    	    if (game.time.now > regularShootTime)
+    	    	    	    {
+    	    	    	    	    shoot.play('', .6, 1, false);
+    	    	    	    	    enemyShot = enemyShotGroup.create(enemy.x, enemy.y + 5, 'shot');
+    	    	    	    	    game.physics.arcade.enable(enemyShot);
+    	    	    	    	    var y = getYRegAimAir();
+    	    	    	    	    var x = getXRegAimAir();
+    	    	    	    	    console.log('y: ' + y);
+    	    	    	    	    console.log('x: ' + x);
+    	    	    	    	    enemyShot.body.velocity.y = y;
+    	    	    	    	    enemyShot.body.velocity.x = x;
+    	    	    	    	    enemyShot.animations.add('regShotE', [0, 1], 10, true);
+    	    	    	    	    enemyShot.animations.play('regShotE');
+    	    	    	    	    regularShootTime = game.time.now + 300;
+    	    	    	    	    regularShootCount = regularShootCount - 1;
+    	    	    	    }
+    	    	    	    if (regularShootCount === 0)
+    	    	    	    {
+    	    	    	    	    regularShoot = 0;
+    	    	    	    }
+    	    	    }
     	    	    
+    	    	    if (notInScript)
+    	    	    {
+    	    	    	    flip();
+    	    	    }
+    	    	    
+    	    	    if (notInScript && avatar.x < 281 && enemy.x < 281)
+    	    	    {
+    	    	    	    script11();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 281 && enemy.x < 512)
+    	    	    {
+    	    	    	    script12();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 281 && enemy.x < 743)
+    	    	    {
+    	    	    	    script13();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 281 && enemy.x < 974)
+    	    	    {
+    	    	    	    script14();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 512 && enemy.x < 281)
+    	    	    {
+    	    	    	    script21();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 512 && enemy.x < 512)
+    	    	    {
+    	    	    	    script22();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 512 && enemy.x < 743)
+    	    	    {
+    	    	    	    script23();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 512 && enemy.x < 974)
+    	    	    {
+    	    	    	    script24();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 743 && enemy.x < 281)
+    	    	    {
+    	    	    	    script31();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 743 && enemy.x < 512)
+    	    	    {
+    	    	    	    script32();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 743 && enemy.x < 743)
+    	    	    {
+    	    	    	    script33();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 743 && enemy.x < 974)
+    	    	    {
+    	    	    	    script34();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 974 && enemy.x < 281)
+    	    	    {
+    	    	    	    script41();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 974 && enemy.x < 512)
+    	    	    {
+    	    	    	    script42();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 974 && enemy.x < 743)
+    	    	    {
+    	    	    	    script43();
+    	    	    }
+    	    	    else if (notInScript && avatar.x < 974 && enemy.x < 974)
+    	    	    {
+    	    	    	    script44();
+    	    	    }
+    	    	        	    	    
+    	    	    /*
     	    	    //player 2 movement and attack
     	    	    enemy.body.velocity.x = 0;
     	    	    if (cursors.left.isDown && enemy.body.touching.down)
@@ -477,8 +581,147 @@ window.onload = function() {
     	    	    	    	    	    fireEnemyShotCount = fireEnemyShotCount + 1;  
     	    	    	    	    }
     	    	    	    }
-    	    	    }  
+    	    	    }*/  
     	    }
+    }
+    
+    function flip()
+    {
+    	   if (avatar.body.x < enemy.body.x)
+    	    	    	    {
+    	    	    	    	    enemy.frame = 0;
+    	    	    	    	    enemyFace = 0;
+    	    	    	    }
+    	    	    	    else
+    	    	    	    {
+    	    	    	    	    enemy.frame = 5;
+    	    	    	    	    enemyFace = 1;
+    	    	    	    } 
+    }
+    
+    function getXRegAimAir()
+    {
+    	    aimValue = avatar.body.x - enemy.body.x;
+    	    if (aimValue < 0)
+    	    {
+    	    	    console.log(-Math.sqrt((regularShootSpeed * regularShootSpeed) + (aimValue * aimValue)));
+    	    	    regularShootSpeedX = game.rnd.integerInRange(-50, 50) + (-Math.sqrt((regularShootSpeed * regularShootSpeed) + (aimValue * aimValue)));
+    	    }
+    	    else
+    	    {
+    	    	    console.log(Math.sqrt((regularShootSpeed * regularShootSpeed) + (aimValue * aimValue)));
+    	    	    regularShootSpeedX = game.rnd.integerInRange(-50, 50) + (Math.sqrt((regularShootSpeed * regularShootSpeed) + (aimValue * aimValue)));
+    	    }
+    	    return regularShootSpeedX;
+    }
+        
+    function getYRegAimAir()
+    {
+    	    regularShootSpeed = game.rnd.integerInRange(450, 500);
+    	    //regularShootSpeed = 0;
+    	    console.log(regularShootSpeed);
+    	    return regularShootSpeed;
+    }
+    
+    function airEnd()
+    {
+    	    notInScript = 1;
+    	    enemy.body.velocity.x = 0;
+    }
+    
+    function readyRegShoot()
+    {
+    	    regularShoot = 1;
+    }
+    
+    function script11()
+    {
+    	    if (game.rnd.integerInRange(1, 9) < 6)
+    	    {
+    	    	   enemy.body.velocity.y = -600;
+    	    	   enemy.body.velocity.x = 400;
+    	    	   game.time.events.add(Phaser.Timer.SECOND * .50, flip, null);
+    	    	   regularShootCount = 3;
+    	    	   game.time.events.add(Phaser.Timer.SECOND * .75, readyRegShoot, null);
+    	    	   notInScript = 1;
+    	    	   //fire script
+    	    }
+    }
+    
+    function script12()
+    {
+    	    //
+    }
+    
+    function script13()
+    {
+    	    //
+    }
+    
+    function script14()
+    {
+    	    //
+    }
+    
+    function script21()
+    {
+    	    //
+    }
+    
+    function script22()
+    {
+    	    //
+    }
+    
+    function script23()
+    {
+    	    //
+    }
+    
+    function script24()
+    {
+    	    //
+    }
+    
+    function script31()
+    {
+    	    //
+    }
+    
+    function script32()
+    {
+    	    //
+    }
+    
+    function script33()
+    {
+    	    //
+    }
+    
+    function script34()
+    {
+    	    //
+    }
+    
+    function script41()
+    {
+    	    //
+    }
+    
+    function script42()
+    {
+    	    //
+    }
+    
+    function script43()
+    {
+    	    //
+    }
+    
+    function script44()
+    {
+    	    enemy.body.velocity.y = -600;
+    	    enemy.body.velocity.x = -400;
     }
     
     //remove errant attacks
